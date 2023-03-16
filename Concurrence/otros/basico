@@ -1,0 +1,23 @@
+#include <iostream>
+#include <bits/stdc++.h>
+
+void imprimir_mensaje(std::string frase)
+{
+    std::cout<< "Dijiste que: " << frase << std::endl;
+}
+
+int main()
+{
+    std::cout << "Iniciando tareas..." << std::endl;
+
+    std::thread t1(imprimir_mensaje, "Soy joto");
+    std::thread t2(imprimir_mensaje, "Mama huevo, digo glu glu glu glu");
+    std::thread t3(imprimir_mensaje, "Ya quedo");
+    t1.join();
+    t2.join();
+    t3.join();
+
+    std::cout << "Todas las tareas se han terminado :)" << std::endl;
+
+    return 0;
+}

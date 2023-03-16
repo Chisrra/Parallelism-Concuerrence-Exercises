@@ -1,0 +1,54 @@
+#include <iostream>
+#include <bits/stdc++.h>
+#include <semaphore.h>
+
+
+const int NUM_THREADS = 5;
+std::mutex cout_mtx;
+sem_t semaforo;
+
+void hilo_trabajador(int id)
+{
+    std::unique_lock<std::mutex> cout_lock(cout_mtx);
+    std::cout << "El hilo " << id << " ha comenzado" << std::endl;
+    cout_lock.unlock();
+
+    sem_wait(&semaforo);
+
+    //Desde aqui...
+
+    cout_lock.lock();
+    std::cout << "Tenemos el semaforo en nuestro poder, muajajajaja\nEsta seccion esta bloqueada para tener la funcion cout solo para el hilo actual " << id << " y no se crucen" << std::endl;
+    cout_lock.unlock();
+
+    //... hasta aqui puedes realizar la tarea, pues tienes el semaforo
+
+    sem_post(&semaforo); //Lo dejamos ir
+
+    cout_lock.lock();
+    std::cout << "El hilo " << id << " ha liberaro el semaforo\n" << std::endl;
+    cout_lock.unlock();
+}
+
+
+int main()
+{
+    sem_init(&semaforo, 0, NUM_THREADS); //La direccion de memoria dle semaforo, si lo compartiremos entre procesos o entre hilos(elegimos sólo hilos), numero de hilos
+
+    std::thread hilos[NUM_THREADS];
+
+    for(int i = 0; i < NUM_THREADS; i++)
+    {
+        hilos[i] = std::thread(hilo_trabajador, i);
+    }
+
+    for(int i = 0; i < NUM_THREADS; i++)
+    {
+        hilos[i].join();
+    }
+
+    sem_destroy(&semaforo);
+
+    return 0;
+}
+

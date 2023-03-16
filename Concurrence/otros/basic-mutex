@@ -1,0 +1,29 @@
+#include <iostream>
+#include <bits/stdc++.h>
+
+std::mutex m;
+int counter = 0;
+
+void increment_counter(int id)
+{
+    for(int i = 0; i < 5; i++)
+    {
+        m.lock();
+        std::cout << "Hilo " << id << " esta incrementando el contador " << std::endl;
+        counter++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::cout << "El valor actual del contador es: " << counter << std::endl;
+        m.unlock();
+    }
+}
+
+int main()
+{
+    std::thread t1(increment_counter, 1);
+    std::thread t2(increment_counter, 2);
+
+    t1.join();
+    t2.join();
+
+    return 0;
+}
