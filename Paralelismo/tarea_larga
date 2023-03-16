@@ -1,0 +1,31 @@
+#include <iostream>
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void tarea_larga(int id_hilo)
+{
+    cout << "Hilo" << id_hilo << "iniciado" << endl;
+
+    for(int i = 0; i < 5; i++)
+    {
+        cout << "Hilo" << id_hilo << " ejecutando tarea" << i << endl << endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    cout << "Hilo" << id_hilo << "finalizado" << endl << endl;
+}
+
+int main()
+{
+    std::thread hilo1(tarea_larga, 1); //Creando un hilo 1 que ejecuta una tarea larga
+    std::thread hilo2(tarea_larga, 2); //Creando un hilo 2 que ejecuta una tarea larga
+
+    //Esperando a que los hilos terminen antes de salir del programa
+    hilo1.join();
+    hilo2.join();
+
+    cout << "Todos los hilos han finalizado" << endl;
+
+    return 0;
+}
+

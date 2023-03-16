@@ -1,0 +1,40 @@
+#include <iostream>
+#include <bits/stdc++.h>
+
+
+// Función que se ejecutará en paralelo en cada hilo
+void sum_Range(std::vector<int>&datos,long long& result, int inicio, int fin)
+{
+    result = std::accumulate(datos.begin()+inicio, datos.begin()+fin, 0);
+}
+
+int main()
+{
+    const int TAM_DATOS = 9000;
+    const int NUM_HILOS = 4;
+    const int TAM_SECC = TAM_DATOS / NUM_HILOS;
+
+    long long inicio, fin, sum_total;
+
+    std::vector<int> datos(TAM_DATOS);
+    std::vector<long long> resultados(NUM_HILOS);
+    std::vector<std::thread> hilos;
+
+    for(long long i = 0; i < TAM_DATOS; i++) datos[i] = i + 1;
+
+
+    for(long long i = 0; i < NUM_HILOS; i++)
+    {
+        inicio = i * TAM_SECC;
+        fin = inicio + TAM_SECC;
+        hilos.emplace_back(sum_Range, std::ref(datos), std::ref(resultados[i]), inicio, fin);
+    }
+
+    for(auto& hilo : hilos) hilo.join();
+    for(long long res : resultados) std::cout << res << " ";
+
+    std::cout << std::endl;
+
+
+    return 0;
+}

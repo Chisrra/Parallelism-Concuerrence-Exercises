@@ -1,0 +1,25 @@
+#include <iostream>
+#include <bits/stdc++.h>
+
+
+// Función que se ejecutará en paralelo en cada hilo
+
+void sum_dos_nums(int a, int b, std::atomic<int>& resultado)
+{
+    int res_local = a + b;
+    resultado.store(res_local);
+}
+
+
+int main()
+{
+    std::atomic<int> res(0); //crea un objeto atomico de tipo entero llamado resultado e inicaliza su valor en 0
+
+    std::thread hilo1(sum_dos_nums, 5, 8, std::ref(res));
+
+    hilo1.join();
+
+    std::cout << "El resultado de la función fue " << res.load() << std::endl;
+
+    return 0;
+}
